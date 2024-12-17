@@ -83,7 +83,7 @@ def save_csv(file_path, rows):
 # Main function to process and plot a given dataset
 def main():
     # File path and column names
-    file_path = r'c:\Users\hassa\OneDrive\Documents\university_MS\Sim_Mod_1\project_work\ml_project\TG_SOUID121044.txt'  # Replace with your file path
+    file_path = r'\TG_SOUID121044.txt'  # Replace with your file path
     s = os.path.basename(file_path)
     print(os.path.splitext(s))
     temperature_column = 'TG'  # Replace with your temperature column (e.g., 'TX', 'TN')
