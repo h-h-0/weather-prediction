@@ -32,7 +32,6 @@ def read_and_preprocess(file_path, temperature_column, quality_column):
 
     # Add a decade column
     df['Decade'] = (df['DATE'].dt.year // 10) * 10
-
     return df
 
 # Function to plot temperature data by decades
@@ -72,28 +71,26 @@ def plot_decades(df, temperature_column):
     # Show the plot
     plt.show()
 
-def save_csv(file_path, rows):
+def save_csv(file_path, df):
     # to save the csv file after preprocessing
-
-    with open(f"{file_path}.csv", "w", newline='') as out_file:
-        writer = csv.writer(out_file)
-        writer.writerows(rows)
-    
+    file_name, ext = os.path.splitext(os.path.basename(file_path))
+    df.to_csv(f"out/{file_name}.csv", index=False)
 
 # Main function to process and plot a given dataset
 def main():
     # File path and column names
-    file_path = r'\TG_SOUID121044.txt'  # Replace with your file path
-    s = os.path.basename(file_path)
-    print(os.path.splitext(s))
+    file_path = r'res/TG_SOUID121044.txt'  # Replace with your file path
     temperature_column = 'TG'  # Replace with your temperature column (e.g., 'TX', 'TN')
     quality_column = 'Q_TG'  # Replace with your quality column (e.g., 'Q_TX', 'Q_TN')
 
     # Read and preprocess the data
     df = read_and_preprocess(file_path, temperature_column, quality_column)
-
+    
     # Plot the data by decades
-    #plot_decades(df, temperature_column)
+    plot_decades(df, temperature_column)
+
+    # to save the csv file of the processed data
+    save_csv(file_path, df)
 
 # Run the main function
 if __name__ == '__main__':
