@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 # Function to read and preprocess the dataset
-def read_and_preprocess(file_path, temperature_column, quality_column):
+def read_and_preprocess(file_path, variable_column, quality_column):
     rows = []
     with open(file_path, 'r') as file:
         reader = csv.reader(file)
@@ -12,29 +12,29 @@ def read_and_preprocess(file_path, temperature_column, quality_column):
             if i >= 21:  # Skiping the metadata and the actual header row
                 rows.append(row)
 
-    df = pd.DataFrame(rows, columns=['SOUID', 'DATE', temperature_column, quality_column])
+    df = pd.DataFrame(rows, columns=['SOUID', 'DATE', variable_column, quality_column])
 
-    # Convert temperature and quality columns to numeric types
-    df[temperature_column] = pd.to_numeric(df[temperature_column], errors='coerce')
+    # Convert variable and quality columns to numeric types
+    df[variable_column] = pd.to_numeric(df[variable_column], errors='coerce')
     df[quality_column] = pd.to_numeric(df[quality_column], errors='coerce')
 
     # Convert DATE to datetime
     df['DATE'] = pd.to_datetime(df['DATE'], format='%Y%m%d', errors='coerce')
 
-    # Filter rows with valid temperature values and quality code == 0
-    df = df[(df[temperature_column] != -9999) & (df[quality_column] == 0)]
+    # Filter rows with valid variable values and quality code == 0
+    df = df[(df[variable_column] != -9999) & (df[quality_column] == 0)]
     
-    # Drop rows with NaN values in DATE or temperature column
-    df = df.dropna(subset=['DATE', temperature_column])
+    # Drop rows with NaN values in DATE or variable column
+    df = df.dropna(subset=['DATE', variable_column])
 
     # Adjust temperature to degrees Celsius
-    df[temperature_column] = df[temperature_column] / 10.0
+    df[variable_column] = df[variable_column] / 10.0
 
     # Add a decade column
     df['Decade'] = (df['DATE'].dt.year // 10) * 10
     return df
 
-# Function to plot temperature data by decades
+# Function to plot climactic variable data by decades
 def plot_decades(df, temperature_column):
     # Get unique decades
     decades = sorted(df['Decade'].unique())
@@ -56,7 +56,8 @@ def plot_decades(df, temperature_column):
         dates = decade_data['DATE']
         temps = decade_data[temperature_column]
 
-        # Plot the temperature data
+        # Plot the data
+        # change Temperature with the appropriate climactic variable
         ax.plot(dates, temps, label=f'Temperature ({decade}s)', linewidth=0.7, color='blue')
         ax.set_title(f'{decade}s', fontsize=12)
         ax.set_xlabel('Year', fontsize=10)
@@ -74,20 +75,20 @@ def plot_decades(df, temperature_column):
 def save_csv(file_path, df):
     # to save the csv file after preprocessing
     file_name, ext = os.path.splitext(os.path.basename(file_path))
-    df.to_csv(f"out/{file_name}.csv", index=False)
+    df.to_csv(f"res/preprocessed_data/{file_name}_processed.csv", index=False)
 
 # Main function to process and plot a given dataset
 def main():
     # File path and column names
-    file_path = r'res/TG_SOUID121044.txt'  # Replace with your file path
-    temperature_column = 'TG'  # Replace with your temperature column (e.g., 'TX', 'TN')
+    file_path = r'res/raw_data/TG_SOUID121044.txt'  # Replace with your file path
+    variable_column = 'TG'  # Replace with your temperature column (e.g., 'TX', 'TN')
     quality_column = 'Q_TG'  # Replace with your quality column (e.g., 'Q_TX', 'Q_TN')
 
     # Read and preprocess the data
-    df = read_and_preprocess(file_path, temperature_column, quality_column)
+    df = read_and_preprocess(file_path, variable_column, quality_column)
     
     # Plot the data by decades
-    plot_decades(df, temperature_column)
+    plot_decades(df, variable_column)
 
     # to save the csv file of the processed data
     save_csv(file_path, df)
