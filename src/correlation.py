@@ -21,8 +21,6 @@ def calculate_correlation(master_file):
 
     return correlation_matrix
 
-    
-
 def main():
     # Path to the master dataset
     master_file = 'master_dataset.csv'  # Replace with the path to your dataset
